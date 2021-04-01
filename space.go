@@ -28,8 +28,11 @@ func (tM *tupleManager) Read(tuple Tuple, receiver chan Tuple) {
 		t := tM.tuples[i]
 		if t.Match(tuple) && !t.IsExpired() {
 			receiver <- t
+			return
 		}
 	}
+
+	receiver <- nil
 }
 
 func (tM *tupleManager) Take(tuple Tuple, receiver chan Tuple) {
@@ -46,8 +49,11 @@ func (tM *tupleManager) Take(tuple Tuple, receiver chan Tuple) {
 			}
 
 			receiver <- t
+			return
 		}
 	}
+
+	receiver <- nil
 }
 
 func (tM *tupleManager) Write(tuple Tuple) {
