@@ -10,18 +10,21 @@ type Tuple interface {
 	Values() []interface{}
 	Match(tuple Tuple) bool
 	IsExpired() bool
+	Renew()
 }
 
 type tuple struct {
-	data    []interface{}
-	expires int64
+	data     []interface{}
+	lifetime int64
+	expires  int64
 	Tuple
 }
 
 func New(expires int64, data ...interface{}) Tuple {
 	return &tuple{
-		data:    data,
-		expires: time.Now().Unix() + expires,
+		data:     data,
+		lifetime: expires,
+		expires:  time.Now().Unix() + expires,
 	}
 }
 
@@ -47,6 +50,10 @@ func (t1 *tuple) Match(t2 Tuple) bool {
 	}
 
 	return true
+}
+
+func (t *tuple) Renew() {
+	t.expires = time.Now().Unix() + t.lifetime
 }
 
 func (t *tuple) IsExpired() bool {
